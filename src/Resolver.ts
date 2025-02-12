@@ -66,7 +66,7 @@ export class Resolver {
                 propertyList[key] = `@${reference}`;
                 dependencies.push(reference);
             } else if (typeof value === 'string' && currentRegExp.test(value)) {
-                propertyList[key] = value.replace(currentRegExp, this.resolveCurrent(parentReferenceName, value));
+                propertyList[key] = value.replace(currentRegExp, (item) => this.resolveCurrent(parentReferenceName, item));
             } else if (typeof value === 'object' && value !== null) {
                 dependencies.push(...this.resolveDependencies(parentReferenceName, value));
             }
