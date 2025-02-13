@@ -23,7 +23,30 @@ export class ParameterParser implements IParser {
             result.push(str);
 
             if (parameter) {
-                const parameterValue = get(fixture.parameters, parameter);
+                let parameterValue = undefined;
+                if (/\.\*/.test(parameter)) {
+                    const splittedPaths = parameter.split('.');
+                    let obj = {...fixture.parameters};
+                    for (let i = 0; i < splittedPaths.length; i++) {
+                        const path = splittedPaths[i];
+                        if (path === '*') {
+                            const values = Object.values(obj);
+                            const randomIndex = Math.floor(Math.random() * values.length);
+                            obj = values[Math.floor(randomIndex)];
+                        } else {
+                            if (!obj[path]) {
+                                break;
+                            }
+                            obj = obj[path];
+                        }
+                        if (i == splittedPaths.length - 1) {
+                            parameterValue = obj;
+                        }
+                    }
+
+                } else {
+                    parameterValue = get(fixture.parameters, parameter);
+                }
 
                 if (parameterValue === undefined) {
                     if (parameter.startsWith('process.env')) {
